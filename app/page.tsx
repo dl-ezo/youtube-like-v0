@@ -159,12 +159,14 @@ export default function YouTubePage() {
             <Button variant="ghost" size="icon">
               <Bell className="h-6 w-6" />
             </Button>
-            <Avatar className="h-8 w-8">
-              <AvatarImage src="/placeholder.svg?height=32&width=32" />
-              <AvatarFallback>
-                <User className="h-4 w-4" />
-              </AvatarFallback>
-            </Avatar>
+            <Link href="/account">
+              <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all">
+                <AvatarImage src="/placeholder.svg?height=32&width=32" />
+                <AvatarFallback>
+                  <User className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+            </Link>
           </div>
         </div>
       </header>
