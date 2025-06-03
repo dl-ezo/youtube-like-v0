@@ -1,3 +1,4 @@
+import type React from "react"
 import { Settings, User, Shield, Bell, Download, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -5,10 +6,53 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import Link from "next/link"
+
+// Switch コンポーネントの代替実装
+function Switch({ defaultChecked = false, ...props }: { defaultChecked?: boolean }) {
+  return (
+    <button
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+        defaultChecked ? "bg-blue-600" : "bg-gray-200"
+      }`}
+      {...props}
+    >
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+          defaultChecked ? "translate-x-6" : "translate-x-1"
+        }`}
+      />
+    </button>
+  )
+}
+
+// Select コンポーネントの代替実装
+function Select({ children, defaultValue }: { children: React.ReactNode; defaultValue?: string }) {
+  return (
+    <div className="relative">
+      <select className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        {children}
+      </select>
+    </div>
+  )
+}
+
+function SelectTrigger({ children }: { children: React.ReactNode }) {
+  return <>{children}</>
+}
+
+function SelectValue() {
+  return null
+}
+
+function SelectContent({ children }: { children: React.ReactNode }) {
+  return <>{children}</>
+}
+
+function SelectItem({ value, children }: { value: string; children: React.ReactNode }) {
+  return <option value={value}>{children}</option>
+}
 
 export default function AccountPage() {
   return (
@@ -75,7 +119,7 @@ export default function AccountPage() {
                       <p className="text-sm text-gray-600">JPG、PNG形式（最大2MB）</p>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="displayName">表示名</Label>
@@ -89,9 +133,9 @@ export default function AccountPage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="description">チャンネル説明</Label>
-                    <Textarea 
-                      id="description" 
-                      placeholder="あなたのチャンネルについて説明してください" 
+                    <Textarea
+                      id="description"
+                      placeholder="あなたのチャンネルについて説明してください"
                       defaultValue="こんにちは！プログラミングやテクノロジーについての動画を投稿しています。"
                       rows={4}
                     />
@@ -151,23 +195,31 @@ export default function AccountPage() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">G</div>
+                      <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        G
+                      </div>
                       <div>
                         <p className="font-medium">Google</p>
                         <p className="text-sm text-gray-600">連携済み</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">解除</Button>
+                    <Button variant="outline" size="sm">
+                      解除
+                    </Button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm font-bold">G</div>
+                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        G
+                      </div>
                       <div>
                         <p className="font-medium">GitHub</p>
                         <p className="text-sm text-gray-600">未連携</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">連携</Button>
+                    <Button variant="outline" size="sm">
+                      連携
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -322,21 +374,27 @@ export default function AccountPage() {
                       <p className="font-medium">視聴履歴</p>
                       <p className="text-sm text-gray-600">これまでに視聴した動画の履歴</p>
                     </div>
-                    <Button variant="outline" size="sm">ダウンロード</Button>
+                    <Button variant="outline" size="sm">
+                      ダウンロード
+                    </Button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">検索履歴</p>
                       <p className="text-sm text-gray-600">これまでの検索クエリの履歴</p>
                     </div>
-                    <Button variant="outline" size="sm">ダウンロード</Button>
+                    <Button variant="outline" size="sm">
+                      ダウンロード
+                    </Button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">コメント履歴</p>
                       <p className="text-sm text-gray-600">投稿したコメントの履歴</p>
                     </div>
-                    <Button variant="outline" size="sm">ダウンロード</Button>
+                    <Button variant="outline" size="sm">
+                      ダウンロード
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -352,14 +410,18 @@ export default function AccountPage() {
                       <p className="font-medium">視聴履歴を削除</p>
                       <p className="text-sm text-gray-600">すべての視聴履歴を完全に削除します</p>
                     </div>
-                    <Button variant="outline" size="sm">削除</Button>
+                    <Button variant="outline" size="sm">
+                      削除
+                    </Button>
                   </div>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">検索履歴を削除</p>
                       <p className="text-sm text-gray-600">すべての検索履歴を完全に削除します</p>
                     </div>
-                    <Button variant="outline" size="sm">削除</Button>
+                    <Button variant="outline" size="sm">
+                      削除
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
