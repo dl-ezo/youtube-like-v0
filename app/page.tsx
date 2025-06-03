@@ -246,33 +246,40 @@ export default function YouTubePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {videos.map((video) => (
-              <Link key={video.id} href="/watch" className="group cursor-pointer">
-                <div className="relative mb-3">
-                  <img
-                    src={video.thumbnail || "/placeholder.svg"}
-                    alt={video.title}
-                    className="w-full aspect-video object-cover rounded-lg group-hover:rounded-none transition-all duration-200"
-                  />
-                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-1 py-0.5 rounded">
-                    {video.duration}
+              <div key={video.id} className="group cursor-pointer">
+                {/* 動画サムネイルとタイトル - 動画ページへのリンク */}
+                <Link href="/watch">
+                  <div className="relative mb-3">
+                    <img
+                      src={video.thumbnail || "/placeholder.svg"}
+                      alt={video.title}
+                      className="w-full aspect-video object-cover rounded-lg group-hover:rounded-none transition-all duration-200"
+                    />
+                    <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-1 py-0.5 rounded">
+                      {video.duration}
+                    </div>
                   </div>
-                </div>
+                </Link>
                 <div className="flex gap-3">
                   <Avatar className="h-9 w-9 flex-shrink-0">
                     <AvatarImage src="/placeholder.svg?height=36&width=36" />
                     <AvatarFallback className="text-xs">{video.channel.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-sm line-clamp-2 mb-1 group-hover:text-blue-600">{video.title}</h3>
-                    <Link href="/channel" className="text-gray-600 text-sm mb-1 hover:text-gray-800">
-                      {video.channel}
+                    <Link href="/watch">
+                      <h3 className="font-medium text-sm line-clamp-2 mb-1 group-hover:text-blue-600">{video.title}</h3>
                     </Link>
+                    <div className="text-gray-600 text-sm mb-1">
+                      <Link href="/channel" className="hover:text-gray-800">
+                        {video.channel}
+                      </Link>
+                    </div>
                     <p className="text-gray-600 text-sm">
                       {video.views} • {video.time}
                     </p>
                   </div>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </main>
