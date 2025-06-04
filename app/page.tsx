@@ -1,8 +1,4 @@
 import {
-  Search,
-  Bell,
-  User,
-  Menu,
   Home,
   Compass,
   PlaySquare,
@@ -19,87 +15,13 @@ import {
   Podcast,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Header } from "@/components/header"
+import { videos } from "@/lib/data"
 import Link from "next/link"
 
 export default function YouTubePage() {
-  const videos = [
-    {
-      id: 1,
-      title: "Next.js 15の新機能を完全解説！App Routerの最新アップデート",
-      channel: "Tech Channel JP",
-      views: "125万回視聴",
-      time: "2日前",
-      duration: "15:32",
-      thumbnail: "/placeholder.svg?height=180&width=320",
-    },
-    {
-      id: 2,
-      title: "React Server Componentsの仕組みを分かりやすく解説",
-      channel: "プログラミング学習",
-      views: "89万回視聴",
-      time: "1週間前",
-      duration: "22:15",
-      thumbnail: "/placeholder.svg?height=180&width=320",
-    },
-    {
-      id: 3,
-      title: "TypeScriptで作る本格的なWebアプリケーション開発",
-      channel: "コーディング道場",
-      views: "234万回視聴",
-      time: "3日前",
-      duration: "45:20",
-      thumbnail: "/placeholder.svg?height=180&width=320",
-    },
-    {
-      id: 4,
-      title: "Tailwind CSSのプロテクニック集 - 美しいUIを効率的に作る方法",
-      channel: "デザイン＆コード",
-      views: "67万回視聴",
-      time: "5日前",
-      duration: "18:45",
-      thumbnail: "/placeholder.svg?height=180&width=320",
-    },
-    {
-      id: 5,
-      title: "Vercelでのデプロイメント完全ガイド - 初心者から上級者まで",
-      channel: "Web開発マスター",
-      views: "156万回視聴",
-      time: "1日前",
-      duration: "28:10",
-      thumbnail: "/placeholder.svg?height=180&width=320",
-    },
-    {
-      id: 6,
-      title: "JavaScript ES2024の新機能をいち早くチェック！",
-      channel: "JS News",
-      views: "92万回視聴",
-      time: "4日前",
-      duration: "12:30",
-      thumbnail: "/placeholder.svg?height=180&width=320",
-    },
-    {
-      id: 7,
-      title: "フルスタック開発者になるためのロードマップ2024",
-      channel: "キャリアアップ",
-      views: "445万回視聴",
-      time: "2週間前",
-      duration: "35:55",
-      thumbnail: "/placeholder.svg?height=180&width=320",
-    },
-    {
-      id: 8,
-      title: "Docker & Kubernetesで始めるコンテナ開発入門",
-      channel: "インフラエンジニア",
-      views: "178万回視聴",
-      time: "1週間前",
-      duration: "52:40",
-      thumbnail: "/placeholder.svg?height=180&width=320",
-    },
-  ]
-
   const sidebarItems = [
     { icon: Home, label: "ホーム", active: true, href: "/" },
     { icon: Compass, label: "探索", href: "/search" },
@@ -126,54 +48,9 @@ export default function YouTubePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 z-50">
-        <div className="flex items-center justify-between px-4 py-2">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
-            </Button>
-            <div className="flex items-center gap-1">
-              <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
-                <PlayCircle className="h-5 w-5 text-white fill-current" />
-              </div>
-              <span className="text-xl font-semibold">YouTube</span>
-            </div>
-          </div>
-
-          <div className="flex-1 max-w-2xl mx-8">
-            <div className="flex">
-              <div className="flex-1 relative">
-                <Input
-                  placeholder="検索"
-                  className="rounded-r-none border-r-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                />
-              </div>
-              <Button className="rounded-l-none px-6 bg-gray-50 hover:bg-gray-100 text-gray-600 border border-l-0">
-                <Search className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon">
-              <Bell className="h-6 w-6" />
-            </Button>
-            <Link href="/account">
-              <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all">
-                <AvatarImage src="/placeholder.svg?height=32&width=32" />
-                <AvatarFallback>
-                  <User className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex pt-16">
-        {/* Sidebar */}
-        <aside className="fixed left-0 top-16 w-60 h-[calc(100vh-4rem)] overflow-y-auto bg-white border-r border-gray-200">
+      <Header />
+      <div className="flex pt-14">
+        <aside className="fixed left-0 top-14 w-60 h-[calc(100vh-3.5rem)] overflow-y-auto bg-white border-r border-gray-200">
           <div className="p-3">
             <nav className="space-y-1">
               {sidebarItems.map((item, index) => (
@@ -188,9 +65,7 @@ export default function YouTubePage() {
                 </Link>
               ))}
             </nav>
-
             <hr className="my-3" />
-
             <div className="space-y-1">
               <h3 className="px-3 py-2 text-sm font-medium text-gray-600">ライブラリ</h3>
               {libraryItems.map((item, index) => (
@@ -200,9 +75,7 @@ export default function YouTubePage() {
                 </Button>
               ))}
             </div>
-
             <hr className="my-3" />
-
             <div className="space-y-1">
               <h3 className="px-3 py-2 text-sm font-medium text-gray-600">探索</h3>
               {exploreItems.map((item, index) => (
@@ -214,12 +87,10 @@ export default function YouTubePage() {
             </div>
           </div>
         </aside>
-
-        {/* Main Content */}
         <main className="ml-60 flex-1 p-6">
           <div className="mb-6">
             <div className="flex gap-3 overflow-x-auto pb-2">
-              <Badge variant="secondary" className="whitespace-nowrap bg-black text-white hover:bg-gray-800">
+              <Badge className="whitespace-nowrap bg-black text-white hover:bg-gray-800">
                 すべて
               </Badge>
               <Badge variant="outline" className="whitespace-nowrap">
@@ -245,11 +116,9 @@ export default function YouTubePage() {
               </Badge>
             </div>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {videos.map((video) => (
               <div key={video.id} className="group cursor-pointer">
-                {/* 動画サムネイルとタイトル - 動画ページへのリンク */}
                 <Link href="/watch">
                   <div className="relative mb-3">
                     <img
