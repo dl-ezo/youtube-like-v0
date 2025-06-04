@@ -1,78 +1,74 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect, useMemo } from "react"
+import { useSearchParams } from "next/navigation"
 import { Filter, User, SlidersHorizontal, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Header } from "@/components/header"
-import { searchVideos, Video } from '@/lib/data'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { searchVideos, type Video } from "@/lib/data"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 export default function SearchPageContent() {
   const searchParams = useSearchParams()
   const [searchResults, setSearchResults] = useState<Video[]>([])
   const [filteredResults, setFilteredResults] = useState<Video[]>([])
-  const [activeFilter, setActiveFilter] = useState('all')
-  const [sortBy, setSortBy] = useState('relevance')
-  const [uploadDate, setUploadDate] = useState('any')
-  const [duration, setDuration] = useState('any')
-  const [searchQuery, setSearchQuery] = useState('')
+  const [activeFilter, setActiveFilter] = useState("all")
+  const [sortBy, setSortBy] = useState("relevance")
+  const [uploadDate, setUploadDate] = useState("any")
+  const [duration, setDuration] = useState("any")
+
+  // Memoize the search query to prevent unnecessary re-renders
+  const searchQuery = useMemo(() => searchParams.get("q") || "", [searchParams])
 
   useEffect(() => {
-    const query = searchParams.get('q') || ''
-    setSearchQuery(query)
-    const results = searchVideos(query, activeFilter === 'all' ? undefined : activeFilter)
+    const results = searchVideos(searchQuery, activeFilter === "all" ? undefined : activeFilter)
     setSearchResults(results)
-  }, [searchParams, activeFilter])
+  }, [searchQuery, activeFilter])
 
   useEffect(() => {
     let filtered = [...searchResults]
 
     // Apply additional filters
-    if (uploadDate !== 'any') {
+    if (uploadDate !== "any") {
       // Filter by upload date (simplified logic)
-      filtered = filtered.filter(video => {
-        if (uploadDate === 'hour') return video.time?.includes('時間前')
-        if (uploadDate === 'today') return video.time?.includes('時間前') || video.time?.includes('分前')
-        if (uploadDate === 'week') return video.time?.includes('日前') || video.time?.includes('時間前') || video.time?.includes('分前')
-        if (uploadDate === 'month') return !video.time?.includes('年前')
+      filtered = filtered.filter((video) => {
+        if (uploadDate === "hour") return video.time?.includes("時間前")
+        if (uploadDate === "today") return video.time?.includes("時間前") || video.time?.includes("分前")
+        if (uploadDate === "week")
+          return video.time?.includes("日前") || video.time?.includes("時間前") || video.time?.includes("分前")
+        if (uploadDate === "month") return !video.time?.includes("年前")
         return true
       })
     }
 
-    if (duration !== 'any' && activeFilter !== 'channel') {
+    if (duration !== "any" && activeFilter !== "channel") {
       // Filter by duration (simplified logic)
-      filtered = filtered.filter(video => {
-        if (!video.duration) return duration === 'long' // Assume long for videos without duration
-        const [minutes] = video.duration.split(':').map(Number)
-        if (duration === 'short') return minutes < 4
-        if (duration === 'medium') return minutes >= 4 && minutes <= 20
-        if (duration === 'long') return minutes > 20
+      filtered = filtered.filter((video) => {
+        if (!video.duration) return duration === "long" // Assume long for videos without duration
+        const [minutes] = video.duration.split(":").map(Number)
+        if (duration === "short") return minutes < 4
+        if (duration === "medium") return minutes >= 4 && minutes <= 20
+        if (duration === "long") return minutes > 20
         return true
       })
     }
 
     // Apply sorting
-    if (sortBy === 'upload_date') {
+    if (sortBy === "upload_date") {
       filtered.sort((a, b) => {
         // Simple sorting by time string (newest first)
-        const timeA = a.time || ''
-        const timeB = b.time || ''
+        const timeA = a.time || ""
+        const timeB = b.time || ""
         return timeA.localeCompare(timeB)
       })
-    } else if (sortBy === 'view_count') {
+    } else if (sortBy === "view_count") {
       filtered.sort((a, b) => {
-        const viewsA = parseInt(a.views?.replace(/[^\d]/g, '') || '0')
-        const viewsB = parseInt(b.views?.replace(/[^\d]/g, '') || '0')
+        const viewsA = Number.parseInt(a.views?.replace(/[^\d]/g, "") || "0")
+        const viewsB = Number.parseInt(b.views?.replace(/[^\d]/g, "") || "0")
         return viewsB - viewsA
       })
-    } else if (sortBy === 'rating') {
+    } else if (sortBy === "rating") {
       // For rating, we'll use a random sort as placeholder
       filtered.sort(() => Math.random() - 0.5)
     }
@@ -88,15 +84,15 @@ export default function SearchPageContent() {
   // ハイライト機能を追加
   const highlightText = (text: string, query: string) => {
     if (!query.trim()) return text
-    
+
     const searchTerms = query.toLowerCase().trim().split(/\s+/)
     let highlightedText = text
-    
-    searchTerms.forEach(term => {
-      const regex = new RegExp(`(${term})`, 'gi')
+
+    searchTerms.forEach((term) => {
+      const regex = new RegExp(`(${term})`, "gi")
       highlightedText = highlightedText.replace(regex, '<mark class="bg-yellow-200 px-0.5">$1</mark>')
     })
-    
+
     return highlightedText
   }
 
@@ -111,9 +107,7 @@ export default function SearchPageContent() {
               <span className="text-gray-600">検索結果: </span>
               <span className="font-medium">{searchQuery}</span>
             </p>
-            <p className="text-sm text-gray-500 mt-1">
-              約 {filteredResults.length} 件の結果
-            </p>
+            <p className="text-sm text-gray-500 mt-1">約 {filteredResults.length} 件の結果</p>
           </div>
         )}
 
@@ -124,7 +118,7 @@ export default function SearchPageContent() {
               <Filter className="h-4 w-4" />
               フィルタ
             </Button>
-            
+
             {/* Sort Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -135,18 +129,10 @@ export default function SearchPageContent() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setSortBy('relevance')}>
-                  関連度順
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortBy('upload_date')}>
-                  アップロード日時
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortBy('view_count')}>
-                  視聴回数
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortBy('rating')}>
-                  評価
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy("relevance")}>関連度順</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy("upload_date")}>アップロード日時</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy("view_count")}>視聴回数</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy("rating")}>評価</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -159,26 +145,16 @@ export default function SearchPageContent() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setUploadDate('any')}>
-                  すべて
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setUploadDate('hour')}>
-                  過去1時間
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setUploadDate('today')}>
-                  今日
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setUploadDate('week')}>
-                  今週
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setUploadDate('month')}>
-                  今月
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setUploadDate("any")}>すべて</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setUploadDate("hour")}>過去1時間</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setUploadDate("today")}>今日</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setUploadDate("week")}>今週</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setUploadDate("month")}>今月</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
             {/* Duration Filter */}
-            {activeFilter !== 'channel' && (
+            {activeFilter !== "channel" && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" className="gap-2">
@@ -187,61 +163,45 @@ export default function SearchPageContent() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem onClick={() => setDuration('any')}>
-                    すべて
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setDuration('short')}>
-                    4分未満
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setDuration('medium')}>
-                    4-20分
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setDuration('long')}>
-                    20分以上
-                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setDuration("any")}>すべて</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setDuration("short")}>4分未満</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setDuration("medium")}>4-20分</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setDuration("long")}>20分以上</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
           </div>
-          
+
           <div className="flex gap-2">
-            <button 
+            <button
               className={`px-3 py-1 rounded-full text-sm ${
-                activeFilter === 'all' 
-                  ? 'bg-black text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                activeFilter === "all" ? "bg-black text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
-              onClick={() => handleFilterChange('all')}
+              onClick={() => handleFilterChange("all")}
             >
               すべて
             </button>
-            <button 
+            <button
               className={`px-3 py-1 rounded-full text-sm ${
-                activeFilter === 'video' 
-                  ? 'bg-black text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                activeFilter === "video" ? "bg-black text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
-              onClick={() => handleFilterChange('video')}
+              onClick={() => handleFilterChange("video")}
             >
               動画
             </button>
-            <button 
+            <button
               className={`px-3 py-1 rounded-full text-sm ${
-                activeFilter === 'channel' 
-                  ? 'bg-black text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                activeFilter === "channel" ? "bg-black text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
-              onClick={() => handleFilterChange('channel')}
+              onClick={() => handleFilterChange("channel")}
             >
               チャンネル
             </button>
-            <button 
+            <button
               className={`px-3 py-1 rounded-full text-sm ${
-                activeFilter === 'playlist' 
-                  ? 'bg-black text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                activeFilter === "playlist" ? "bg-black text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
-              onClick={() => handleFilterChange('playlist')}
+              onClick={() => handleFilterChange("playlist")}
             >
               再生リスト
             </button>
@@ -252,22 +212,20 @@ export default function SearchPageContent() {
         {filteredResults.length === 0 && searchQuery && (
           <div className="text-center py-12">
             <p className="text-lg text-gray-600 mb-2">検索結果が見つかりませんでした</p>
-            <p className="text-sm text-gray-500">
-              別のキーワードで検索してみるか、フィルタを変更してください
-            </p>
+            <p className="text-sm text-gray-500">別のキーワードで検索してみるか、フィルタを変更してください</p>
           </div>
         )}
 
         {/* Search Results */}
         <div className="space-y-6">
           {filteredResults.map((result) => (
-            <article 
-              key={result.id} 
+            <article
+              key={result.id}
               className="flex flex-col sm:flex-row gap-4 group cursor-pointer p-4 rounded-lg hover:bg-gray-50 transition-colors"
               role="article"
               tabIndex={0}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
+                if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault()
                   // Navigate to video/channel/playlist
                 }
@@ -295,7 +253,7 @@ export default function SearchPageContent() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <h3 
+                <h3
                   className="text-lg font-medium mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors"
                   dangerouslySetInnerHTML={{ __html: highlightText(result.title, searchQuery) }}
                 />
@@ -312,14 +270,14 @@ export default function SearchPageContent() {
                         <AvatarImage src="/placeholder.svg?height=24&width=24" alt={`${result.channel}のアバター`} />
                         <AvatarFallback className="text-xs">{result.channel?.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <span 
+                      <span
                         className="text-sm text-gray-600"
-                        dangerouslySetInnerHTML={{ __html: highlightText(result.channel || '', searchQuery) }}
+                        dangerouslySetInnerHTML={{ __html: highlightText(result.channel || "", searchQuery) }}
                       />
                     </div>
-                    <p 
+                    <p
                       className="text-sm text-gray-700 line-clamp-2"
-                      dangerouslySetInnerHTML={{ __html: highlightText(result.description || '', searchQuery) }}
+                      dangerouslySetInnerHTML={{ __html: highlightText(result.description || "", searchQuery) }}
                     />
                   </>
                 )}
@@ -337,16 +295,11 @@ export default function SearchPageContent() {
                         <p className="text-sm text-gray-600">{result.subscribers}</p>
                       </div>
                     </div>
-                    <p 
+                    <p
                       className="text-sm text-gray-700 line-clamp-2 mb-3"
-                      dangerouslySetInnerHTML={{ __html: highlightText(result.description || '', searchQuery) }}
+                      dangerouslySetInnerHTML={{ __html: highlightText(result.description || "", searchQuery) }}
                     />
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="mt-3"
-                      aria-label={`${result.title}チャンネルに登録`}
-                    >
+                    <Button variant="outline" size="sm" className="mt-3" aria-label={`${result.title}チャンネルに登録`}>
                       チャンネル登録
                     </Button>
                   </>
@@ -357,13 +310,11 @@ export default function SearchPageContent() {
                     <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
                       <span>再生リスト</span>
                       <span>•</span>
-                      <span 
-                        dangerouslySetInnerHTML={{ __html: highlightText(result.channel || '', searchQuery) }}
-                      />
+                      <span dangerouslySetInnerHTML={{ __html: highlightText(result.channel || "", searchQuery) }} />
                     </div>
-                    <p 
+                    <p
                       className="text-sm text-gray-700 line-clamp-2"
-                      dangerouslySetInnerHTML={{ __html: highlightText(result.description || '', searchQuery) }}
+                      dangerouslySetInnerHTML={{ __html: highlightText(result.description || "", searchQuery) }}
                     />
                   </>
                 )}
